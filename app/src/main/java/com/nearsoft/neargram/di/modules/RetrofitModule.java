@@ -4,6 +4,7 @@ import android.content.Context;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.nearsoft.neargram.webservices.InstagramService;
 import com.squareup.okhttp.Cache;
 import com.squareup.okhttp.OkHttpClient;
 
@@ -56,6 +57,12 @@ public class RetrofitModule {
                 .baseUrl(baseUrl)
                 .client(okHttpClient)
                 .build();
+    }
+
+    @Provides
+    @Singleton
+    public InstagramService provideInstagramService(Retrofit retrofit) {
+        return retrofit.create(InstagramService.class);
     }
 
 }
