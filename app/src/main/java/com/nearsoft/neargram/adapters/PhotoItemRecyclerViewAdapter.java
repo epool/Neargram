@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 
 import com.nearsoft.neargram.R;
 import com.nearsoft.neargram.databinding.PhotoListContentBinding;
-import com.nearsoft.neargram.dummy.DummyContent;
+import com.nearsoft.neargram.view.models.PhotoVM;
 
 import java.util.List;
 
@@ -19,11 +19,11 @@ import java.util.List;
 public class PhotoItemRecyclerViewAdapter
         extends RecyclerView.Adapter<PhotoItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<DummyContent.DummyItem> mValues;
+    private final List<PhotoVM> photoVMs;
     private OnItemClickListener itemClickListener;
 
-    public PhotoItemRecyclerViewAdapter(List<DummyContent.DummyItem> items, OnItemClickListener itemClickListener) {
-        mValues = items;
+    public PhotoItemRecyclerViewAdapter(List<PhotoVM> photoVMs, OnItemClickListener itemClickListener) {
+        this.photoVMs = photoVMs;
         this.itemClickListener = itemClickListener;
     }
 
@@ -35,17 +35,17 @@ public class PhotoItemRecyclerViewAdapter
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, final int position) {
-        final DummyContent.DummyItem item = mValues.get(position);
+        final PhotoVM item = photoVMs.get(position);
         holder.setupView(position, item);
     }
 
     @Override
     public int getItemCount() {
-        return mValues.size();
+        return photoVMs.size();
     }
 
     public interface OnItemClickListener {
-        void onItemClick(View view, int position, DummyContent.DummyItem item);
+        void onItemClick(View view, int position, PhotoVM item);
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
@@ -56,21 +56,17 @@ public class PhotoItemRecyclerViewAdapter
             this.binding = binding;
         }
 
-        public void setupView(final int position, final DummyContent.DummyItem item) {
-            binding.id.setText(item.id);
-            binding.content.setText(item.content);
+        public void setupView(final int position, final PhotoVM photoVM) {
+            binding.setPhoto(photoVM);
 
             binding.getRoot().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    itemClickListener.onItemClick(v, position, item);
+                    itemClickListener.onItemClick(v, position, photoVM);
                 }
             });
-        }
 
-        @Override
-        public String toString() {
-            return super.toString() + " '" + binding.content.getText() + "'";
+            binding.executePendingBindings();
         }
     }
 }

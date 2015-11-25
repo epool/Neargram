@@ -6,7 +6,13 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nearsoft.neargram.webservices.InstagramService;
 import com.squareup.okhttp.Cache;
+import com.squareup.okhttp.HttpUrl;
+import com.squareup.okhttp.Interceptor;
 import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
+
+import java.io.IOException;
 
 import javax.inject.Singleton;
 
@@ -46,6 +52,22 @@ public class RetrofitModule {
     public OkHttpClient provideOkHttpClient(Cache cache) {
         OkHttpClient client = new OkHttpClient();
         client.setCache(cache);
+        client.interceptors().add(new Interceptor() {
+            @Override
+            public Response intercept(Chain chain) throws IOException {
+                Request request = chain.request();
+
+                HttpUrl httpUrl = request.httpUrl().newBuilder()
+                        .addQueryParameter("client_id", "f7373613c193424ba4be7f85ec6e6b2c")
+                        .build();
+
+                Request newRequest = request.newBuilder()
+                        .url(httpUrl)
+                        .build();
+
+                return chain.proceed(newRequest);
+            }
+        });
         return client;
     }
 

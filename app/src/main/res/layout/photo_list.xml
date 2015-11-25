@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_photo_list">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/photo_list"
-        android:name="com.nearsoft.neargram.PhotoListFragment"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
-        app:layoutManager="LinearLayoutManager"
-        tools:context=".view.activities.PhotoListActivity"
-        tools:listitem="@layout/photo_list_content" />
+        app:colors="@{com.nearsoft.neargram.R.array.swipe_colors}">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/photo_list"
+            android:name="com.nearsoft.neargram.PhotoListFragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            app:layoutManager="LinearLayoutManager"
+            tools:context=".view.activities.PhotoListActivity"
+            tools:listitem="@layout/photo_list_content" />
+
+    </android.support.v4.widget.SwipeRefreshLayout>
 </layout>

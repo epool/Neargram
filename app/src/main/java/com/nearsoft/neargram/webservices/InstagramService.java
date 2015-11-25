@@ -1,6 +1,8 @@
 package com.nearsoft.neargram.webservices;
 
-import com.nearsoft.neargram.webservices.responses.InstagramPopularResponse;
+import android.support.annotation.IntRange;
+
+import com.nearsoft.neargram.webservices.responses.InstagramSearchResponse;
 
 import retrofit.Call;
 import retrofit.http.GET;
@@ -12,7 +14,7 @@ import retrofit.http.Query;
  */
 public interface InstagramService {
 
-    @GET("media/popular")
-    Call<InstagramPopularResponse> getPopularPhotos(@Query("client_id") String clientId);
+    @GET("media/search")
+    Call<InstagramSearchResponse> getPopularPhotos(@Query("lat") double latitude, @Query("lng") double longitude, @Query("distance") @IntRange(from = 1000, to = 5000) int distanceInMeters);
 
 }

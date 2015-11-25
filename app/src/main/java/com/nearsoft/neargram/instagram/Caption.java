@@ -13,7 +13,7 @@ public class Caption {
     private String text;
     @SerializedName("from")
     @Expose
-    private From from;
+    private User user;
     @SerializedName("id")
     @Expose
     private String id;
@@ -47,17 +47,17 @@ public class Caption {
     }
 
     /**
-     * @return The from
+     * @return The user
      */
-    public From getFrom() {
-        return from;
+    public User getUser() {
+        return user;
     }
 
     /**
-     * @param from The from
+     * @param user The user
      */
-    public void setFrom(From from) {
-        this.from = from;
+    public void setUser(User user) {
+        this.user = user;
     }
 
     /**
