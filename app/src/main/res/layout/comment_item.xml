@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn="@layout/activity_photo_detail">
+
+    <data>
+
+        <variable
+            name="comment"
+            type="com.nearsoft.neargram.view.models.CommentVM" />
+    </data>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/textViewComment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{comment.text}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1"
+            tools:text="Comment" />
+
+        <TextView
+            android:id="@+id/textViewCommentCreateDate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end"
+            android:maxLines="1"
+            android:text="@{comment.formattedDate}"
+            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+            tools:text="Date" />
+
+    </LinearLayout>
+</layout>

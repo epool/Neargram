@@ -7,7 +7,7 @@ public class Comment {
 
     @SerializedName("created_time")
     @Expose
-    private String createdTime;
+    private long createdTime;
     @SerializedName("text")
     @Expose
     private String text;
@@ -21,14 +21,14 @@ public class Comment {
     /**
      * @return The createdTime
      */
-    public String getCreatedTime() {
+    public long getCreatedTime() {
         return createdTime;
     }
 
     /**
      * @param createdTime The created_time
      */
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(long createdTime) {
         this.createdTime = createdTime;
     }
 
