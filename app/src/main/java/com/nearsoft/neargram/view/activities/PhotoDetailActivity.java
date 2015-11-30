@@ -5,23 +5,21 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.graphics.Palette;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
-import com.bumptech.glide.request.target.BitmapImageViewTarget;
+import com.bumptech.glide.request.target.SimpleTarget;
 import com.nearsoft.neargram.R;
 import com.nearsoft.neargram.databinding.ActivityPhotoDetailBinding;
 import com.nearsoft.neargram.model.PhotoModel;
-import com.nearsoft.neargram.model.realm.Comment;
 import com.nearsoft.neargram.model.realm.Photo;
 import com.nearsoft.neargram.util.ViewUtil;
-import com.nearsoft.neargram.view.adapters.realm.CommentRecyclerViewAdapter;
+import com.nearsoft.neargram.view.adapters.realm.PhotoDetailPagerAdapter;
 import com.nearsoft.neargram.view.models.PhotoVM;
 
 import io.realm.Realm;
@@ -36,17 +34,19 @@ import io.realm.RealmResults;
  */
 public class PhotoDetailActivity extends BaseActivity implements RealmChangeListener {
     public static String ARG_PHOTO = "ARG_PHOTO";
+    public static String ARG_POSITION = "ARG_POSITION";
     private Realm realm;
-    private CommentRecyclerViewAdapter commentRecyclerViewAdapter;
+    private RealmResults<Photo> photos;
+    private PhotoDetailPagerAdapter photoDetailPagerAdapter;
     private ActivityPhotoDetailBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        binding = getBinding(ActivityPhotoDetailBinding.class);
-
         PhotoVM photoVM = getIntent().getParcelableExtra(ARG_PHOTO);
+
+        binding = getBinding(ActivityPhotoDetailBinding.class);
         binding.setPhoto(photoVM);
 
         binding.fab.setOnClickListener(new View.OnClickListener() {
@@ -60,42 +60,15 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
         realm = Realm.getDefaultInstance();
         realm.addChangeListener(this);
 
-        Glide.with(this)
-                .load(photoVM.getStandardResolutionUrl())
-                .asBitmap()
-                .into(new BitmapImageViewTarget(binding.imageViewPhotoCover) {
-                    @Override
-                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
-                        super.onResourceReady(bitmap, glideAnimation);
-                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
-                            @Override
-                            public void onGenerated(Palette palette) {
-                                final Palette.Swatch swatch = palette.getVibrantSwatch();
-                                binding.toolbarLayout.setStatusBarScrimColor(palette.getDarkVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimaryDark)));
-                                binding.toolbarLayout.setContentScrimColor(palette.getVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimary)));
-
-                                int vibrantColor = palette.getVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimary));
-                                int titleTextColor = Color.WHITE;
-                                int bodyTextColor = Color.WHITE;
-                                if (swatch != null) {
-                                    titleTextColor = swatch.getTitleTextColor();
-                                    bodyTextColor = swatch.getBodyTextColor();
-                                    int color = swatch.getTitleTextColor();
-                                    binding.toolbarLayout.setExpandedTitleColor(color);
-                                    binding.toolbarLayout.setCollapsedTitleTextColor(color);
-                                    ViewUtil.Toolbar.colorizeToolbar(binding.toolbar, color, PhotoDetailActivity.this);
-                                }
-                                setupRecyclerView(vibrantColor, titleTextColor, bodyTextColor);
-                            }
-                        });
-                    }
-                });
+        updateToolbarColors(photoVM);
 
         // Show the Up button in the action bar.
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
+
+        setupViewPager();
     }
 
     @Override
@@ -103,13 +76,52 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
         return R.layout.activity_photo_detail;
     }
 
-    private void setupRecyclerView(int vibrantColor, int titleTextColor, int bodyTextColor) {
-        Photo photo = PhotoModel.getPhotoById(realm, binding.getPhoto().getId());
-        RealmResults<Comment> comments = photo.getComments().where().findAll();
-        commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(this, comments, true, binding.getPhoto(), vibrantColor, titleTextColor, bodyTextColor);
-        RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
-        binding.recyclerViewComments.setLayoutManager(layoutManager);
-        binding.recyclerViewComments.setAdapter(commentRecyclerViewAdapter);
+    private void setupViewPager() {
+        int position = getIntent().getIntExtra(ARG_POSITION, 0);
+        photos = PhotoModel.getAllPhotos(realm);
+        photoDetailPagerAdapter = new PhotoDetailPagerAdapter(getSupportFragmentManager(), photos);
+        binding.viewPagerPhotoDetail.setAdapter(photoDetailPagerAdapter);
+        binding.viewPagerPhotoDetail.setCurrentItem(position);
+        binding.viewPagerPhotoDetail.addOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                PhotoVM photoVM = new PhotoVM(photos.get(position));
+                binding.setPhoto(photoVM);
+                binding.executePendingBindings();
+
+                updateToolbarColors(photoVM);
+            }
+        });
+    }
+
+    private void updateToolbarColors(PhotoVM photoVM) {
+        Glide.with(PhotoDetailActivity.this)
+                .load(photoVM.getStandardResolutionUrl())
+                .asBitmap()
+                .into(new SimpleTarget<Bitmap>() {
+                    @Override
+                    public void onResourceReady(Bitmap bitmap, GlideAnimation<? super Bitmap> glideAnimation) {
+                        Palette.from(bitmap).generate(new Palette.PaletteAsyncListener() {
+                            @Override
+                            public void onGenerated(Palette palette) {
+                                final Palette.Swatch swatch = palette.getVibrantSwatch();
+                                binding.toolbarLayout.setStatusBarScrimColor(palette.getDarkVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimaryDark)));
+                                binding.toolbarLayout.setContentScrimColor(palette.getVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimary)));
+
+                                binding.toolbarLayout.setExpandedTitleColor(Color.WHITE);
+                                binding.toolbarLayout.setCollapsedTitleTextColor(Color.WHITE);
+                                ViewUtil.Toolbar.colorizeToolbar(binding.toolbar, Color.WHITE, PhotoDetailActivity.this);
+
+                                if (swatch != null) {
+                                    int color = swatch.getTitleTextColor();
+                                    binding.toolbarLayout.setExpandedTitleColor(color);
+                                    binding.toolbarLayout.setCollapsedTitleTextColor(color);
+                                    ViewUtil.Toolbar.colorizeToolbar(binding.toolbar, color, PhotoDetailActivity.this);
+                                }
+                            }
+                        });
+                    }
+                });
     }
 
     @Override
@@ -135,6 +147,6 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
 
     @Override
     public void onChange() {
-        commentRecyclerViewAdapter.notifyDataSetChanged();
+        photoDetailPagerAdapter.notifyDataSetChanged();
     }
 }
