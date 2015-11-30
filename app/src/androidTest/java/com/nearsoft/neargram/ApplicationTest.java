@@ -4,7 +4,7 @@ import android.test.ApplicationTestCase;
 
 import com.nearsoft.neargram.di.components.ApplicationComponent;
 import com.nearsoft.neargram.webservices.InstagramService;
-import com.nearsoft.neargram.webservices.responses.InstagramPopularResponse;
+import com.nearsoft.neargram.webservices.responses.InstagramSearchResponse;
 
 import java.io.IOException;
 
@@ -30,8 +30,9 @@ public class ApplicationTest extends ApplicationTestCase<NeargramApplication> {
         ApplicationComponent applicationComponent = neargramApplication.getApplicationComponent();
         InstagramService service = applicationComponent.provideInstagramService();
 
-        Response<InstagramPopularResponse> response = service.getPopularPhotos("f7373613c193424ba4be7f85ec6e6b2c").execute();
-        InstagramPopularResponse instagramPopularResponse = response.body();
-        assertNotNull(instagramPopularResponse);
+        Response<InstagramSearchResponse> response = service.getPopularPhotos(29.0974411, -111.0220760, 1000).execute();
+        assertTrue(response.isSuccess());
+        InstagramSearchResponse instagramSearchResponse = response.body();
+        assertNotNull(instagramSearchResponse);
     }
 }

@@ -3,16 +3,29 @@ package com.nearsoft.neargram.view.activities;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
 import com.nearsoft.neargram.R;
 import com.nearsoft.neargram.adapters.PhotoItemRecyclerViewAdapter;
 import com.nearsoft.neargram.databinding.ActivityPhotoListBinding;
-import com.nearsoft.neargram.dummy.DummyContent;
-import com.nearsoft.neargram.view.fragments.PhotoDetailFragment;
+import com.nearsoft.neargram.instagram.Photo;
+import com.nearsoft.neargram.view.models.PhotoVM;
+import com.nearsoft.neargram.webservices.InstagramService;
+import com.nearsoft.neargram.webservices.responses.InstagramSearchResponse;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import retrofit.Call;
+import retrofit.Callback;
+import retrofit.Response;
+import retrofit.Retrofit;
 
 /**
  * An activity representing a list of Photos. This activity
@@ -22,39 +35,33 @@ import com.nearsoft.neargram.view.fragments.PhotoDetailFragment;
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
  */
-public class PhotoListActivity extends BaseActivity implements PhotoItemRecyclerViewAdapter.OnItemClickListener {
+public class PhotoListActivity extends BaseActivity implements PhotoItemRecyclerViewAdapter.OnItemClickListener, SwipeRefreshLayout.OnRefreshListener {
+    private ActivityPhotoListBinding binding;
 
     /**
      * Whether or not the activity is in two-pane mode, i.e. running on a tablet
      * device.
      */
-    private boolean mTwoPane;
+    private boolean mIsTablet;
+    private Call<InstagramSearchResponse> call;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ActivityPhotoListBinding binding = getBinding(ActivityPhotoListBinding.class);
+        binding = getBinding(ActivityPhotoListBinding.class);
 
         binding.toolbar.setTitle(getTitle());
 
-        binding.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
+        binding.photoListLayout.swipeRefreshLayout.setOnRefreshListener(this);
 
-        setupRecyclerView(binding.photoListLayout.photoList);
+        binding.executePendingBindings();
 
-        if (binding.photoListLayout.photoDetailContainer != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-w900dp).
-            // If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-        }
+        // The detail container view will be present only in the
+        // large-screen layouts (res/values-w900dp).
+        mIsTablet = getResources().getBoolean(R.bool.isTablet);
+
+        onRefresh();
     }
 
     @Override
@@ -62,28 +69,62 @@ public class PhotoListActivity extends BaseActivity implements PhotoItemRecycler
         return R.layout.activity_photo_list;
     }
 
-    private void setupRecyclerView(@NonNull RecyclerView recyclerView) {
-        PhotoItemRecyclerViewAdapter adapter = new PhotoItemRecyclerViewAdapter(DummyContent.ITEMS, this);
-        recyclerView.setAdapter(adapter);
-    }
-
     @Override
-    public void onItemClick(View view, int position, DummyContent.DummyItem item) {
-        if (mTwoPane) {
-            Bundle arguments = new Bundle();
-            arguments.putString(PhotoDetailFragment.ARG_ITEM_ID, item.id);
-            PhotoDetailFragment fragment = new PhotoDetailFragment();
-            fragment.setArguments(arguments);
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.photo_detail_container, fragment)
-                    .commit();
-        } else {
-            Context context = view.getContext();
-            Intent intent = new Intent(context, PhotoDetailActivity.class);
-            intent.putExtra(PhotoDetailFragment.ARG_ITEM_ID, item.id);
+    protected void onDestroy() {
+        super.onDestroy();
 
-            context.startActivity(intent);
+        if (call != null) {
+            call.cancel();
         }
     }
 
+    @Override
+    public void onItemClick(View view, int position, PhotoVM photoVM) {
+        Context context = view.getContext();
+        Intent intent = new Intent(context, PhotoDetailActivity.class);
+        intent.putExtra(PhotoDetailActivity.ARG_PHOTO, photoVM);
+
+        String transitionName = getString(R.string.photo_transition_name);
+
+        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+                this,
+                view.findViewById(R.id.imageViewPhoto),   // The view which starts the transition
+                transitionName    // The transitionName of the view we’re transitioning to
+        );
+        ActivityCompat.startActivity(this, intent, options.toBundle());
+    }
+
+    private void setupRecyclerView(List<PhotoVM> photoVMs) {
+        PhotoItemRecyclerViewAdapter adapter = new PhotoItemRecyclerViewAdapter(photoVMs, this);
+        RecyclerView.LayoutManager layoutManager = new GridLayoutManager(PhotoListActivity.this, mIsTablet ? 3 : 1);
+        binding.photoListLayout.photoList.setLayoutManager(layoutManager);
+        binding.photoListLayout.photoList.setAdapter(adapter);
+    }
+
+    @Override
+    public void onRefresh() {
+        binding.photoListLayout.swipeRefreshLayout.setRefreshing(true);
+
+        InstagramService instagramService = getApplicationComponent().provideInstagramService();
+        call = instagramService.getPopularPhotos(29.0974411, -111.0220760, 5000);
+        call.enqueue(new Callback<InstagramSearchResponse>() {
+            @Override
+            public void onResponse(Response<InstagramSearchResponse> response, Retrofit retrofit) {
+                List<PhotoVM> photoVMs = new ArrayList<>();
+                for (Photo photo : response.body().getData()) {
+                    photoVMs.add(new PhotoVM(photo));
+                }
+                setupRecyclerView(photoVMs);
+
+                binding.photoListLayout.swipeRefreshLayout.setRefreshing(false);
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+                Snackbar.make(binding.getRoot(), t.getLocalizedMessage(), Snackbar.LENGTH_LONG).show();
+
+                binding.photoListLayout.swipeRefreshLayout.setRefreshing(false);
+            }
+        });
+    }
 }
