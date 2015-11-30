@@ -23,7 +23,8 @@
         <activity
             android:name=".view.activities.PhotoDetailActivity"
             android:label="@string/title_photo_detail"
-            android:parentActivityName=".view.activities.PhotoListActivity">
+            android:parentActivityName=".view.activities.PhotoListActivity"
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".view.activities.PhotoListActivity" />

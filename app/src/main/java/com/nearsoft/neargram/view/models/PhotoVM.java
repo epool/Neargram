@@ -8,12 +8,15 @@ import android.os.Parcelable;
 import com.nearsoft.neargram.BR;
 import com.nearsoft.neargram.instagram.Photo;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Photo view model.
  * Created by epool on 11/24/15.
  */
 public class PhotoVM extends BaseObservable implements Parcelable {
-    public static final Parcelable.Creator<PhotoVM> CREATOR = new Parcelable.Creator<PhotoVM>() {
+    public static final Creator<PhotoVM> CREATOR = new Creator<PhotoVM>() {
         public PhotoVM createFromParcel(Parcel source) {
             return new PhotoVM(source);
         }
@@ -27,16 +30,9 @@ public class PhotoVM extends BaseObservable implements Parcelable {
     private String standardResolutionUrl;
     private String username;
     private String caption;
+    private List<CommentVM> commentVMs = new ArrayList<>();
 
     public PhotoVM() {
-    }
-
-    protected PhotoVM(Parcel in) {
-        this.thumbnailUrl = in.readString();
-        this.lowResolutionUrl = in.readString();
-        this.standardResolutionUrl = in.readString();
-        this.username = in.readString();
-        this.caption = in.readString();
     }
 
     public PhotoVM(Photo photo) {
@@ -49,6 +45,20 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         if (photo.getCaption() != null) {
             this.caption = photo.getCaption().getText();
         }
+        if (photo.getComments().getCount() > 0) {
+            for (com.nearsoft.neargram.instagram.Comment comment : photo.getComments().getData()) {
+                commentVMs.add(new CommentVM(comment));
+            }
+        }
+    }
+
+    protected PhotoVM(Parcel in) {
+        this.thumbnailUrl = in.readString();
+        this.lowResolutionUrl = in.readString();
+        this.standardResolutionUrl = in.readString();
+        this.username = in.readString();
+        this.caption = in.readString();
+        this.commentVMs = in.createTypedArrayList(CommentVM.CREATOR);
     }
 
     @Bindable
@@ -101,6 +111,16 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         notifyPropertyChanged(BR.caption);
     }
 
+    @Bindable
+    public List<CommentVM> getCommentVMs() {
+        return commentVMs;
+    }
+
+    public void setCommentVMs(List<CommentVM> commentVMs) {
+        this.commentVMs = commentVMs;
+        notifyPropertyChanged(BR.commentVMs);
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -113,5 +133,6 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         dest.writeString(this.standardResolutionUrl);
         dest.writeString(this.username);
         dest.writeString(this.caption);
+        dest.writeTypedList(commentVMs);
     }
 }
