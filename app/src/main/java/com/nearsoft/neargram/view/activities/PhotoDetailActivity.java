@@ -15,13 +15,17 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.animation.GlideAnimation;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.nearsoft.neargram.R;
-import com.nearsoft.neargram.adapters.CommentItemRecyclerViewAdapter;
 import com.nearsoft.neargram.databinding.ActivityPhotoDetailBinding;
+import com.nearsoft.neargram.model.PhotoModel;
+import com.nearsoft.neargram.model.realm.Comment;
+import com.nearsoft.neargram.model.realm.Photo;
 import com.nearsoft.neargram.util.ViewUtil;
-import com.nearsoft.neargram.view.models.CommentVM;
+import com.nearsoft.neargram.view.adapters.realm.CommentRecyclerViewAdapter;
 import com.nearsoft.neargram.view.models.PhotoVM;
 
-import java.util.List;
+import io.realm.Realm;
+import io.realm.RealmChangeListener;
+import io.realm.RealmResults;
 
 /**
  * An activity representing a single Photo detail screen. This
@@ -29,8 +33,10 @@ import java.util.List;
  * item details are presented side-by-side with a list of items
  * in a {@link PhotoListActivity}.
  */
-public class PhotoDetailActivity extends BaseActivity {
+public class PhotoDetailActivity extends BaseActivity implements RealmChangeListener {
     public static String ARG_PHOTO = "ARG_PHOTO";
+    private Realm realm;
+    private CommentRecyclerViewAdapter commentRecyclerViewAdapter;
     private ActivityPhotoDetailBinding binding;
 
     @Override
@@ -50,7 +56,7 @@ public class PhotoDetailActivity extends BaseActivity {
             }
         });
 
-        setupRecyclerView(photoVM.getCommentVMs());
+        setupRecyclerView();
 
         Glide.with(this)
                 .load(photoVM.getStandardResolutionUrl())
@@ -81,8 +87,10 @@ public class PhotoDetailActivity extends BaseActivity {
         ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
-            actionBar.setTitle(photoVM.getUsername());
         }
+
+        realm = Realm.getDefaultInstance();
+        realm.addChangeListener(this);
     }
 
     @Override
@@ -90,20 +98,28 @@ public class PhotoDetailActivity extends BaseActivity {
         return R.layout.activity_photo_detail;
     }
 
-    private void setupRecyclerView(List<CommentVM> commentVMs) {
-        CommentItemRecyclerViewAdapter adapter = new CommentItemRecyclerViewAdapter(commentVMs, null);
+    private void setupRecyclerView() {
+        Photo photo = PhotoModel.getPhotoById(binding.getPhoto().getId());
+        RealmResults<Comment> comments = photo.getComments().where().findAll();
+        commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(this, comments, true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         binding.recyclerViewComments.setLayoutManager(layoutManager);
-        binding.recyclerViewComments.setAdapter(adapter);
+        binding.recyclerViewComments.setAdapter(commentRecyclerViewAdapter);
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == android.R.id.home) {
-            onBackPressed();
-            return true;
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
         }
-        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onChange() {
+        commentRecyclerViewAdapter.notifyDataSetChanged();
     }
 }

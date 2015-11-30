@@ -4,6 +4,8 @@
 
     <string name="photo_transition_name">transition_photo</string>
 
+    <string name="message_empty_photos_list">There are no photos, touch anywhere to refresh.</string>
+
     <string name="lorem">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vestibulum vel viverra justo, vulputate convallis nisl. Nam pretium vitae enim a finibus. Sed a ex eu lectus rutrum egestas. Nullam egestas ante pretium viverra sodales. Sed sodales, massa et scelerisque dapibus, ante magna vulputate velit, mollis elementum tortor lacus vel arcu. Nullam vel turpis massa. Sed semper consequat iaculis. Aenean semper augue ac lectus faucibus aliquet. Donec aliquam, turpis a tristique dictum, leo massa tincidunt urna, sed tempus purus nisi id lacus. Morbi maximus ornare rutrum. Sed tristique lectus eu libero facilisis commodo. Vestibulum rhoncus cursus sapien eu luctus.\n
         \n

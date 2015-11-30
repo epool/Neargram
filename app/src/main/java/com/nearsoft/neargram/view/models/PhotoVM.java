@@ -6,7 +6,8 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.nearsoft.neargram.BR;
-import com.nearsoft.neargram.instagram.Photo;
+import com.nearsoft.neargram.model.realm.Comment;
+import com.nearsoft.neargram.model.realm.Photo;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  * Created by epool on 11/24/15.
  */
 public class PhotoVM extends BaseObservable implements Parcelable {
+
     public static final Creator<PhotoVM> CREATOR = new Creator<PhotoVM>() {
         public PhotoVM createFromParcel(Parcel source) {
             return new PhotoVM(source);
@@ -25,50 +27,50 @@ public class PhotoVM extends BaseObservable implements Parcelable {
             return new PhotoVM[size];
         }
     };
-    private String thumbnailUrl;
+
+    private String id;
     private String lowResolutionUrl;
     private String standardResolutionUrl;
-    private String username;
-    private String caption;
+    private long createdTime;
+    private CaptionVM captionVM;
+    private UserVM userVM;
     private List<CommentVM> commentVMs = new ArrayList<>();
 
     public PhotoVM() {
     }
 
     public PhotoVM(Photo photo) {
-        this.thumbnailUrl = photo.getImages().getThumbnail().getUrl();
-        this.lowResolutionUrl = photo.getImages().getLowResolution().getUrl();
-        this.standardResolutionUrl = photo.getImages().getStandardResolution().getUrl();
-        if (photo.getUser() != null) {
-            this.username = photo.getUser().getUsername();
-        }
+        this.id = photo.getId();
+        this.lowResolutionUrl = photo.getLowResolutionUrl();
+        this.standardResolutionUrl = photo.getStandardResolutionUrl();
+        this.createdTime = photo.getCreatedTime();
         if (photo.getCaption() != null) {
-            this.caption = photo.getCaption().getText();
+            this.captionVM = new CaptionVM(photo.getCaption());
         }
-        if (photo.getComments().getCount() > 0) {
-            for (com.nearsoft.neargram.instagram.Comment comment : photo.getComments().getData()) {
-                commentVMs.add(new CommentVM(comment));
-            }
+        this.userVM = new UserVM(photo.getUser());
+        for (Comment comment : photo.getComments()) {
+            commentVMs.add(new CommentVM(comment));
         }
     }
 
     protected PhotoVM(Parcel in) {
-        this.thumbnailUrl = in.readString();
+        this.id = in.readString();
         this.lowResolutionUrl = in.readString();
         this.standardResolutionUrl = in.readString();
-        this.username = in.readString();
-        this.caption = in.readString();
+        this.createdTime = in.readLong();
+        this.captionVM = in.readParcelable(CaptionVM.class.getClassLoader());
+        this.userVM = in.readParcelable(UserVM.class.getClassLoader());
         this.commentVMs = in.createTypedArrayList(CommentVM.CREATOR);
     }
 
     @Bindable
-    public String getThumbnailUrl() {
-        return thumbnailUrl;
+    public String getId() {
+        return id;
     }
 
-    public void setThumbnailUrl(String thumbnailUrl) {
-        this.thumbnailUrl = thumbnailUrl;
-        notifyPropertyChanged(BR.thumbnailUrl);
+    public void setId(String id) {
+        this.id = id;
+        notifyPropertyChanged(BR.id);
     }
 
     @Bindable
@@ -92,23 +94,33 @@ public class PhotoVM extends BaseObservable implements Parcelable {
     }
 
     @Bindable
-    public String getUsername() {
-        return username;
+    public long getCreatedTime() {
+        return createdTime;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-        notifyPropertyChanged(BR.username);
+    public void setCreatedTime(long createdTime) {
+        this.createdTime = createdTime;
+        notifyPropertyChanged(BR.createdTime);
     }
 
     @Bindable
-    public String getCaption() {
-        return caption;
+    public CaptionVM getCaptionVM() {
+        return captionVM;
     }
 
-    public void setCaption(String caption) {
-        this.caption = caption;
-        notifyPropertyChanged(BR.caption);
+    public void setCaptionVM(CaptionVM captionVM) {
+        this.captionVM = captionVM;
+        notifyPropertyChanged(BR.captionVM);
+    }
+
+    @Bindable
+    public UserVM getUserVM() {
+        return userVM;
+    }
+
+    public void setUserVM(UserVM userVM) {
+        this.userVM = userVM;
+        notifyPropertyChanged(BR.userVM);
     }
 
     @Bindable
@@ -128,11 +140,13 @@ public class PhotoVM extends BaseObservable implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString(this.thumbnailUrl);
+        dest.writeString(this.id);
         dest.writeString(this.lowResolutionUrl);
         dest.writeString(this.standardResolutionUrl);
-        dest.writeString(this.username);
-        dest.writeString(this.caption);
+        dest.writeLong(this.createdTime);
+        dest.writeParcelable(this.captionVM, flags);
+        dest.writeParcelable(this.userVM, flags);
         dest.writeTypedList(commentVMs);
     }
+
 }

@@ -3,11 +3,14 @@ package com.nearsoft.neargram.di.modules;
 import android.content.Context;
 
 import com.nearsoft.neargram.NeargramApplication;
+import com.nearsoft.neargram.util.SyncUtil;
 
 import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
 
 /**
  * Dagger 2 application module.
@@ -19,6 +22,14 @@ public class ApplicationModule {
 
     public ApplicationModule(NeargramApplication neargramApplication) {
         this.neargramApplication = neargramApplication;
+
+        RealmConfiguration config = new RealmConfiguration.Builder(this.neargramApplication.getApplicationContext())
+                .name("neargram.realm")
+                .schemaVersion(1)
+                .build();
+        Realm.setDefaultConfiguration(config);
+
+        SyncUtil.CreateSyncAccount(this.neargramApplication.getApplicationContext());
     }
 
     @Singleton

@@ -6,42 +6,46 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 import com.nearsoft.neargram.BR;
-import com.nearsoft.neargram.model.realm.Comment;
+import com.nearsoft.neargram.model.realm.Caption;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- * Comment view model.
- * Created by epool on 11/26/15.
+ * Caption view model.
+ * Created by epool on 11/28/15.
  */
-public class CommentVM extends BaseObservable implements Parcelable {
+public class CaptionVM extends BaseObservable implements Parcelable {
 
-    public static final Creator<CommentVM> CREATOR = new Creator<CommentVM>() {
-        public CommentVM createFromParcel(Parcel source) {
-            return new CommentVM(source);
+    public static final Creator<CaptionVM> CREATOR = new Creator<CaptionVM>() {
+        public CaptionVM createFromParcel(Parcel source) {
+            return new CaptionVM(source);
         }
 
-        public CommentVM[] newArray(int size) {
-            return new CommentVM[size];
+        public CaptionVM[] newArray(int size) {
+            return new CaptionVM[size];
         }
     };
 
     private String id;
-    private String text;
     private long createdTime;
+    private String text;
     private UserVM userVM;
 
-    public CommentVM() {
+    public CaptionVM() {
     }
 
-    public CommentVM(Comment comment) {
-        this.id = comment.getId();
-        this.text = comment.getText();
-        this.createdTime = comment.getCreatedTime();
+    public CaptionVM(Caption caption) {
+        this.id = caption.getId();
+        this.createdTime = caption.getCreatedTime();
+        this.text = caption.getText();
     }
 
-    protected CommentVM(Parcel in) {
+    protected CaptionVM(Parcel in) {
         this.id = in.readString();
-        this.text = in.readString();
         this.createdTime = in.readLong();
+        this.text = in.readString();
         this.userVM = in.readParcelable(UserVM.class.getClassLoader());
     }
 
@@ -66,16 +70,6 @@ public class CommentVM extends BaseObservable implements Parcelable {
     }
 
     @Bindable
-    public long getCreatedTime() {
-        return createdTime;
-    }
-
-    public void setCreatedTime(long createdTime) {
-        this.createdTime = createdTime;
-        notifyPropertyChanged(BR.createdTime);
-    }
-
-    @Bindable
     public UserVM getUserVM() {
         return userVM;
     }
@@ -83,6 +77,11 @@ public class CommentVM extends BaseObservable implements Parcelable {
     public void setUserVM(UserVM userVM) {
         this.userVM = userVM;
         notifyPropertyChanged(BR.userVM);
+    }
+
+    public String getFormattedDate() {
+        DateFormat dateFormat = SimpleDateFormat.getDateTimeInstance();
+        return dateFormat.format(new Date(createdTime * 1000));
     }
 
     @Override
@@ -93,8 +92,8 @@ public class CommentVM extends BaseObservable implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(this.id);
-        dest.writeString(this.text);
         dest.writeLong(this.createdTime);
+        dest.writeString(this.text);
         dest.writeParcelable(this.userVM, flags);
     }
 

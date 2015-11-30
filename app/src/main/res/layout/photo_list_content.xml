@@ -41,7 +41,7 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:text="@{photo.username}"
+                android:text="@{photo.userVM.username}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Body1"
                 tools:text="Caption" />
 
@@ -51,9 +51,20 @@
                 android:layout_height="wrap_content"
                 android:ellipsize="end"
                 android:maxLines="3"
-                android:text="@{photo.caption}"
+                android:text="@{photo.captionVM.text}"
                 android:textAppearance="@style/TextAppearance.AppCompat.Caption"
                 tools:text="Username" />
+
+            <TextView
+                android:id="@+id/textViewCreatedTime"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:ellipsize="end"
+                android:maxLines="1"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                app:unixTimestamp="@{photo.createdTime}"
+                tools:text="Nov 28, 2015 2:14:33 PM" />
 
         </LinearLayout>
 

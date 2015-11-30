@@ -4,22 +4,40 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn="@layout/activity_photo_list">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipeRefreshLayout"
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:colors="@{com.nearsoft.neargram.R.array.swipe_colors}">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/photo_list"
-            android:name="com.nearsoft.neargram.PhotoListFragment"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipeRefreshLayout"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="16dp"
-            android:layout_marginRight="16dp"
-            app:layoutManager="LinearLayoutManager"
-            tools:context=".view.activities.PhotoListActivity"
-            tools:listitem="@layout/photo_list_content" />
+            app:colors="@{com.nearsoft.neargram.R.array.swipe_colors}">
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/photo_list"
+                android:name="com.nearsoft.neargram.PhotoListFragment"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:visibility="gone"
+                app:layoutManager="LinearLayoutManager"
+                tools:context=".view.activities.PhotoListActivity"
+                tools:listitem="@layout/photo_list_content" />
+
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <TextView
+            android:id="@+id/textViewEmpty"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="?attr/selectableItemBackground"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="@string/message_empty_photos_list"
+            android:visibility="visible"
+            tools:text="@string/message_empty_photos_list" />
+
+    </FrameLayout>
 </layout>
