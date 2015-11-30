@@ -56,8 +56,6 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
             }
         });
 
-        setupRecyclerView();
-
         Glide.with(this)
                 .load(photoVM.getStandardResolutionUrl())
                 .asBitmap()
@@ -91,6 +89,8 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
 
         realm = Realm.getDefaultInstance();
         realm.addChangeListener(this);
+
+        setupRecyclerView();
     }
 
     @Override
