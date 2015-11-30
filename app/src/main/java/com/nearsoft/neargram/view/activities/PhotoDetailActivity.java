@@ -99,12 +99,22 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
     }
 
     private void setupRecyclerView() {
-        Photo photo = PhotoModel.getPhotoById(binding.getPhoto().getId());
+        Photo photo = PhotoModel.getPhotoById(realm, binding.getPhoto().getId());
         RealmResults<Comment> comments = photo.getComments().where().findAll();
         commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(this, comments, true);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         binding.recyclerViewComments.setLayoutManager(layoutManager);
         binding.recyclerViewComments.setAdapter(commentRecyclerViewAdapter);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if (realm != null) {
+            realm.removeChangeListener(this);
+            realm.close();
+        }
     }
 
     @Override

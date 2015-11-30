@@ -16,11 +16,8 @@ import io.realm.RealmResults;
  */
 public class PhotoModel {
 
-    public static Photo getPhotoById(String id) {
-        Realm realm = Realm.getDefaultInstance();
-        Photo photo = realm.where(Photo.class).equalTo(Photo.ID, id).findFirst();
-        realm.close();
-        return photo;
+    public static Photo getPhotoById(Realm realm, String id) {
+        return realm.where(Photo.class).equalTo(Photo.ID, id).findFirst();
     }
 
     public static RealmResults<Photo> getAllPhotos(Realm realm) {
