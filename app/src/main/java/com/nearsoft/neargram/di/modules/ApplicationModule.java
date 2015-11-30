@@ -1,5 +1,7 @@
 package com.nearsoft.neargram.di.modules;
 
+import android.content.Context;
+
 import com.nearsoft.neargram.NeargramApplication;
 
 import javax.inject.Singleton;
@@ -21,7 +23,7 @@ public class ApplicationModule {
 
     @Singleton
     @Provides
-    public NeargramApplication providesNeargramApplication() {
-        return neargramApplication;
+    public Context provideApplicationContext() {
+        return neargramApplication.getApplicationContext();
     }
 }

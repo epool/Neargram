@@ -48,7 +48,7 @@ public class PhotoListActivity extends BaseActivity implements PhotoItemRecycler
 
         setupRecyclerView(binding.photoListLayout.photoList);
 
-        if (findViewById(R.id.photo_detail_container) != null) {
+        if (binding.photoListLayout.photoDetailContainer != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-w900dp).
             // If this view is present, then the
