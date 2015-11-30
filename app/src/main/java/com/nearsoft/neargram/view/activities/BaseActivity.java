@@ -53,7 +53,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     }
 
     protected ApplicationComponent getApplicationComponent() {
-        return ((NeargramApplication) getApplication()).getApplicationComponent();
+        return NeargramApplication.getApplicationComponent();
     }
 
     protected void injectComponent(ActivityComponent activityComponent) {

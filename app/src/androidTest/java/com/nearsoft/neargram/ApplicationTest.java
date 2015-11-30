@@ -14,6 +14,8 @@ import retrofit.Response;
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
  */
 public class ApplicationTest extends ApplicationTestCase<NeargramApplication> {
+    private ApplicationComponent applicationComponent;
+
     public ApplicationTest() {
         super(NeargramApplication.class);
     }
@@ -23,11 +25,10 @@ public class ApplicationTest extends ApplicationTestCase<NeargramApplication> {
         super.setUp();
 
         createApplication();
+        applicationComponent = NeargramApplication.getApplicationComponent();
     }
 
     public void testInstagramRequest() throws IOException {
-        NeargramApplication neargramApplication = getApplication();
-        ApplicationComponent applicationComponent = neargramApplication.getApplicationComponent();
         InstagramService service = applicationComponent.provideInstagramService();
 
         Response<InstagramSearchResponse> response = service.getPopularPhotos(29.0974411, -111.0220760, 1000).execute();

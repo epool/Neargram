@@ -12,7 +12,11 @@ import com.nearsoft.neargram.di.modules.RetrofitModule;
  * Created by epool on 11/23/15.
  */
 public class NeargramApplication extends Application {
-    private ApplicationComponent applicationComponent;
+    private static ApplicationComponent applicationComponent;
+
+    public static ApplicationComponent getApplicationComponent() {
+        return applicationComponent;
+    }
 
     @Override
     public void onCreate() {
@@ -22,9 +26,5 @@ public class NeargramApplication extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .retrofitModule(new RetrofitModule("https://api.instagram.com/v1/"))
                 .build();
-    }
-
-    public ApplicationComponent getApplicationComponent() {
-        return applicationComponent;
     }
 }

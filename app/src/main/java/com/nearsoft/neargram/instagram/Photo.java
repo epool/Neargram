@@ -13,7 +13,7 @@ public class Photo {
     private Object attribution;
     @SerializedName("tags")
     @Expose
-    private List<Object> tags = new ArrayList<Object>();
+    private List<Object> tags = new ArrayList<>();
     @SerializedName("location")
     @Expose
     private Object location;
@@ -25,7 +25,7 @@ public class Photo {
     private String filter;
     @SerializedName("created_time")
     @Expose
-    private String createdTime;
+    private long createdTime;
     @SerializedName("link")
     @Expose
     private String link;
@@ -37,7 +37,7 @@ public class Photo {
     private Images images;
     @SerializedName("users_in_photo")
     @Expose
-    private List<Object> usersInPhoto = new ArrayList<Object>();
+    private List<Object> usersInPhoto = new ArrayList<>();
     @SerializedName("caption")
     @Expose
     private Caption caption;
@@ -124,14 +124,14 @@ public class Photo {
     /**
      * @return The createdTime
      */
-    public String getCreatedTime() {
+    public long getCreatedTime() {
         return createdTime;
     }
 
     /**
      * @param createdTime The created_time
      */
-    public void setCreatedTime(String createdTime) {
+    public void setCreatedTime(long createdTime) {
         this.createdTime = createdTime;
     }
 

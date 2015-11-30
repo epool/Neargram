@@ -11,7 +11,7 @@ public class Comment {
     @SerializedName("text")
     @Expose
     private String text;
-    @SerializedName("form")
+    @SerializedName("from")
     @Expose
     private User user;
     @SerializedName("id")
