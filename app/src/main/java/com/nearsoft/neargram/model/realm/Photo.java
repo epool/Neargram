@@ -18,6 +18,7 @@ public class Photo extends RealmObject {
     private String standardResolutionUrl;
     private long createdTime;
     private Caption caption;
+    private int likes;
     private User user;
     private RealmList<Comment> comments;
 
@@ -32,6 +33,7 @@ public class Photo extends RealmObject {
         if (photo.getCaption() != null) {
             this.caption = new Caption(photo.getCaption());
         }
+        this.likes = photo.getLikes().getCount();
         this.user = new User(photo.getUser());
         this.comments = new RealmList<>();
         for (com.nearsoft.neargram.instagram.Comment comment : photo.getComments().getData()) {
@@ -77,6 +79,14 @@ public class Photo extends RealmObject {
 
     public void setCaption(Caption caption) {
         this.caption = caption;
+    }
+
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
     }
 
     public User getUser() {

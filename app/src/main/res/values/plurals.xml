@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <plurals name="label_likes">
+        <item quantity="one">%d Like</item>
+        <item quantity="other">%d Likes</item>
+    </plurals>
+</resources>

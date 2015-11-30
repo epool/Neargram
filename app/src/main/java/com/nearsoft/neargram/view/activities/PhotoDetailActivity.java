@@ -1,6 +1,7 @@
 package com.nearsoft.neargram.view.activities;
 
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v4.content.ContextCompat;
@@ -56,6 +57,9 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
             }
         });
 
+        realm = Realm.getDefaultInstance();
+        realm.addChangeListener(this);
+
         Glide.with(this)
                 .load(photoVM.getStandardResolutionUrl())
                 .asBitmap()
@@ -69,13 +73,19 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
                                 final Palette.Swatch swatch = palette.getVibrantSwatch();
                                 binding.toolbarLayout.setStatusBarScrimColor(palette.getDarkVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimaryDark)));
                                 binding.toolbarLayout.setContentScrimColor(palette.getVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimary)));
+
+                                int vibrantColor = palette.getVibrantColor(ContextCompat.getColor(PhotoDetailActivity.this, R.color.colorPrimary));
+                                int titleTextColor = Color.WHITE;
+                                int bodyTextColor = Color.WHITE;
                                 if (swatch != null) {
+                                    titleTextColor = swatch.getTitleTextColor();
+                                    bodyTextColor = swatch.getBodyTextColor();
                                     int color = swatch.getTitleTextColor();
-                                    binding.toolbarLayout.setExpandedTitleTextAppearance(R.style.AppTheme);
                                     binding.toolbarLayout.setExpandedTitleColor(color);
                                     binding.toolbarLayout.setCollapsedTitleTextColor(color);
                                     ViewUtil.Toolbar.colorizeToolbar(binding.toolbar, color, PhotoDetailActivity.this);
                                 }
+                                setupRecyclerView(vibrantColor, titleTextColor, bodyTextColor);
                             }
                         });
                     }
@@ -86,11 +96,6 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
-
-        realm = Realm.getDefaultInstance();
-        realm.addChangeListener(this);
-
-        setupRecyclerView();
     }
 
     @Override
@@ -98,10 +103,10 @@ public class PhotoDetailActivity extends BaseActivity implements RealmChangeList
         return R.layout.activity_photo_detail;
     }
 
-    private void setupRecyclerView() {
+    private void setupRecyclerView(int vibrantColor, int titleTextColor, int bodyTextColor) {
         Photo photo = PhotoModel.getPhotoById(realm, binding.getPhoto().getId());
         RealmResults<Comment> comments = photo.getComments().where().findAll();
-        commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(this, comments, true);
+        commentRecyclerViewAdapter = new CommentRecyclerViewAdapter(this, comments, true, binding.getPhoto(), vibrantColor, titleTextColor, bodyTextColor);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(this);
         binding.recyclerViewComments.setLayoutManager(layoutManager);
         binding.recyclerViewComments.setAdapter(commentRecyclerViewAdapter);
