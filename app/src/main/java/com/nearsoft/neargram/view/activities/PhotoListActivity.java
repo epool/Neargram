@@ -5,8 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SyncStatusObserver;
 import android.os.Bundle;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -46,7 +44,7 @@ public class PhotoListActivity extends BaseActivity implements PhotoRecyclerView
     /**
      * Handle to a SyncObserver. The ProgressBar element is visible until the SyncObserver reports
      * that the sync is complete.
-     * <p/>
+     * <p>
      * <p>This allows us to delete our SyncObserver once the application is no longer in the
      * foreground.
      */
@@ -159,15 +157,16 @@ public class PhotoListActivity extends BaseActivity implements PhotoRecyclerView
         Intent intent = new Intent(context, PhotoDetailActivity.class);
         intent.putExtra(PhotoDetailActivity.ARG_PHOTO, photoVM);
         intent.putExtra(PhotoDetailActivity.ARG_POSITION, position);
+        startActivity(intent);
 
-        String transitionName = getString(R.string.photo_transition_name);
-
-        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
-                this,
-                view.findViewById(R.id.imageViewPhoto),   // The view which starts the transition
-                transitionName    // The transitionName of the view we’re transitioning to
-        );
-        ActivityCompat.startActivity(this, intent, options.toBundle());
+//        String transitionName = getString(R.string.photo_transition_name);
+//
+//        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
+//                this,
+//                view.findViewById(R.id.imageViewPhoto),   // The view which starts the transition
+//                transitionName    // The transitionName of the view we’re transitioning to
+//        );
+//        ActivityCompat.startActivity(this, intent, options.toBundle());
     }
 
     @Override
