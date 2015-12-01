@@ -2,8 +2,6 @@
     <string name="app_name">Neargram</string>
     <string name="title_photo_detail">Photo Detail</string>
 
-    <string name="photo_transition_name">transition_photo</string>
-
     <string name="message_empty_photos_list">There are no photos, touch anywhere to refresh.</string>
 
     <string name="lorem">

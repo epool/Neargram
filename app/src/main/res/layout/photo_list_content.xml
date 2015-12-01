@@ -25,9 +25,10 @@
             android:layout_marginRight="16dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            android:transitionName="@string/photo_transition_name"
-            app:error="@{com.nearsoft.neargram.R.mipmap.ic_launcher}"
+            android:transitionName="@{photo.id}"
             app:imageUrl="@{photo.lowResolutionUrl}"
+            app:isRounded="@{true}"
+            app:placeholder="@{@drawable/ic_launcher}"
             tools:targetApi="LOLLIPOP" />
 
         <LinearLayout
