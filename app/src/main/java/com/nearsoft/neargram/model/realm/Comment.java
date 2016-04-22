@@ -8,6 +8,7 @@ import io.realm.annotations.PrimaryKey;
  * Created by epool on 11/27/15.
  */
 public class Comment extends RealmObject {
+
     @PrimaryKey
     private String id;
     private String text;

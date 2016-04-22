@@ -16,7 +16,7 @@ import java.io.IOException;
 
 import javax.inject.Inject;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 /**
  * Sync adapter.
@@ -37,10 +37,12 @@ public class SyncAdapter extends AbstractThreadedSyncAdapter {
     }
 
     @Override
-    public void onPerformSync(Account account, Bundle extras, String authority, ContentProviderClient provider, SyncResult syncResult) {
+    public void onPerformSync(Account account, Bundle extras, String authority,
+                              ContentProviderClient provider, SyncResult syncResult) {
         try {
-            Response<InstagramSearchResponse> response = instagramService.getPopularPhotos(29.0974411, -111.0220760, 5000).execute();
-            if (response.isSuccess()) {
+            Response<InstagramSearchResponse> response =
+                    instagramService.getPopularPhotos(29.0974411, -111.0220760, 5000).execute();
+            if (response.isSuccessful()) {
                 PhotoModel.clearPhotos();
                 InstagramSearchResponse instagramSearchResponse = response.body();
                 PhotoModel.savePhotos(instagramSearchResponse.getData());

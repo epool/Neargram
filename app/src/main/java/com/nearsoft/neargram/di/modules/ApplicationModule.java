@@ -3,6 +3,7 @@ package com.nearsoft.neargram.di.modules;
 import android.content.Context;
 
 import com.nearsoft.neargram.NeargramApplication;
+import com.nearsoft.neargram.model.realm.migrations.Migration1;
 import com.nearsoft.neargram.util.SyncUtil;
 
 import javax.inject.Singleton;
@@ -25,7 +26,8 @@ public class ApplicationModule {
 
         RealmConfiguration config = new RealmConfiguration.Builder(this.neargramApplication.getApplicationContext())
                 .name("neargram.realm")
-                .schemaVersion(1)
+                .schemaVersion(2)
+                .migration(new Migration1())
                 .build();
         Realm.setDefaultConfiguration(config);
 

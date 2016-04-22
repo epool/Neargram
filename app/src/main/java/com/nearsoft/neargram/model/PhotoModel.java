@@ -9,6 +9,7 @@ import java.util.List;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
+import io.realm.Sort;
 
 /**
  * Photo model to handle photo actions.
@@ -21,7 +22,7 @@ public class PhotoModel {
     }
 
     public static RealmResults<Photo> getAllPhotos(Realm realm) {
-        return realm.where(Photo.class).findAllSorted(Photo.CREATED_TIME, false);
+        return realm.where(Photo.class).findAllSorted(Photo.CREATED_TIME, Sort.DESCENDING);
     }
 
     public static void savePhotos(List<com.nearsoft.neargram.instagram.Photo> photos) {
@@ -41,10 +42,10 @@ public class PhotoModel {
         Realm realm = Realm.getDefaultInstance();
 
         realm.beginTransaction();
-        realm.where(Caption.class).findAll().clear();
-        realm.where(Comment.class).findAll().clear();
-        realm.where(Photo.class).findAll().clear();
-        realm.where(User.class).findAll().clear();
+        realm.delete(Caption.class);
+        realm.delete(Comment.class);
+        realm.delete(Photo.class);
+        realm.delete(User.class);
         realm.commitTransaction();
 
         realm.close();
