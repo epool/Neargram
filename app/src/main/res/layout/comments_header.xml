@@ -25,8 +25,9 @@
             android:layout_marginRight="16dp"
             android:adjustViewBounds="true"
             android:scaleType="centerCrop"
-            app:error="@{com.nearsoft.neargram.R.mipmap.ic_launcher}"
-            app:imageUrl="@{photo.userVM.profilePicture}" />
+            app:imageUrl="@{photo.userVM.profilePicture}"
+            app:isRounded="@{true}"
+            app:placeholder="@{@drawable/ic_launcher}" />
 
         <LinearLayout
             android:layout_width="match_parent"

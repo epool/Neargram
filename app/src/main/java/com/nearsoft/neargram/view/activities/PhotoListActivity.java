@@ -159,7 +159,7 @@ public class PhotoListActivity extends BaseActivity implements PhotoRecyclerView
         intent.putExtra(PhotoDetailActivity.ARG_POSITION, position);
         startActivity(intent);
 
-//        String transitionName = getString(R.string.photo_transition_name);
+//        String transitionName = photoVM.getId();
 //
 //        ActivityOptionsCompat options = ActivityOptionsCompat.makeSceneTransitionAnimation(
 //                this,
