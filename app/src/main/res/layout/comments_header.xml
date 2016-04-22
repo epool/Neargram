@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="photo"
+            type="com.nearsoft.neargram.view.models.PhotoVM" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/linearLayoutHeader"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+
+        <ImageView
+            android:id="@+id/imageViewProfilePicture"
+            android:layout_width="56dp"
+            android:layout_height="56dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:adjustViewBounds="true"
+            android:scaleType="centerCrop"
+            app:error="@{com.nearsoft.neargram.R.mipmap.ic_launcher}"
+            app:imageUrl="@{photo.userVM.profilePicture}" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/textViewLikes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{photo.userVM.username}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Body2"
+                tools:text="Username" />
+
+            <TextView
+                android:id="@+id/textViewCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{photo.captionVM.text}"
+                android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                tools:text="Caption" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</layout>

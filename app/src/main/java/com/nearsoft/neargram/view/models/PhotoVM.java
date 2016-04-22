@@ -33,6 +33,7 @@ public class PhotoVM extends BaseObservable implements Parcelable {
     private String standardResolutionUrl;
     private long createdTime;
     private CaptionVM captionVM;
+    private int likes;
     private UserVM userVM;
     private List<CommentVM> commentVMs = new ArrayList<>();
 
@@ -47,6 +48,7 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         if (photo.getCaption() != null) {
             this.captionVM = new CaptionVM(photo.getCaption());
         }
+        this.likes = photo.getLikes();
         this.userVM = new UserVM(photo.getUser());
         for (Comment comment : photo.getComments()) {
             commentVMs.add(new CommentVM(comment));
@@ -59,6 +61,7 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         this.standardResolutionUrl = in.readString();
         this.createdTime = in.readLong();
         this.captionVM = in.readParcelable(CaptionVM.class.getClassLoader());
+        this.likes = in.readInt();
         this.userVM = in.readParcelable(UserVM.class.getClassLoader());
         this.commentVMs = in.createTypedArrayList(CommentVM.CREATOR);
     }
@@ -114,6 +117,16 @@ public class PhotoVM extends BaseObservable implements Parcelable {
     }
 
     @Bindable
+    public int getLikes() {
+        return likes;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+        notifyPropertyChanged(BR.likes);
+    }
+
+    @Bindable
     public UserVM getUserVM() {
         return userVM;
     }
@@ -145,6 +158,7 @@ public class PhotoVM extends BaseObservable implements Parcelable {
         dest.writeString(this.standardResolutionUrl);
         dest.writeLong(this.createdTime);
         dest.writeParcelable(this.captionVM, flags);
+        dest.writeInt(this.likes);
         dest.writeParcelable(this.userVM, flags);
         dest.writeTypedList(commentVMs);
     }
