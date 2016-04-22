@@ -23,7 +23,7 @@ public class GenericAccountService extends Service {
 
     /**
      * Obtain a handle to the {@link android.accounts.Account} used for sync in this application.
-     * <p/>
+     * <p>
      * <p>It is important that the accountType specified here matches the value in your sync adapter
      * configuration XML file for android.accounts.AccountAuthenticator (often saved in
      * res/xml/sync_adapter.xml). If this is not set correctly, you'll receive an error indicating

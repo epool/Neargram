@@ -20,6 +20,7 @@ import com.nearsoft.neargram.di.modules.ActivityModule;
  */
 public abstract class BaseActivity extends AppCompatActivity {
     private ViewDataBinding binding;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
         binding = DataBindingUtil.setContentView(this, layoutResourceId);
 
-        Toolbar toolbar = (Toolbar) findViewById(getToolbarId());
+        toolbar = (Toolbar) findViewById(getToolbarId());
         if (toolbar != null) {
             setSupportActionBar(toolbar);
         }
@@ -46,6 +47,10 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     protected int getToolbarId() {
         return R.id.toolbar;
+    }
+
+    public Toolbar getToolbar() {
+        return toolbar;
     }
 
     protected <T extends ViewDataBinding> T getBinding(Class<T> clazz) {
