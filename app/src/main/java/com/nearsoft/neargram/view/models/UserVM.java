@@ -5,7 +5,7 @@ import android.databinding.Bindable;
 import android.os.Parcel;
 import android.os.Parcelable;
 
-import com.android.databinding.library.baseAdapters.BR;
+import com.nearsoft.neargram.BR;
 import com.nearsoft.neargram.model.realm.User;
 
 /**

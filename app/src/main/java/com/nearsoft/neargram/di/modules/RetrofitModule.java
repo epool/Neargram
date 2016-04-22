@@ -7,12 +7,6 @@ import com.google.gson.FieldAttributes;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.nearsoft.neargram.webservices.InstagramService;
-import com.squareup.okhttp.Cache;
-import com.squareup.okhttp.HttpUrl;
-import com.squareup.okhttp.Interceptor;
-import com.squareup.okhttp.OkHttpClient;
-import com.squareup.okhttp.Request;
-import com.squareup.okhttp.Response;
 
 import java.io.IOException;
 
@@ -21,8 +15,14 @@ import javax.inject.Singleton;
 import dagger.Module;
 import dagger.Provides;
 import io.realm.RealmObject;
-import retrofit.GsonConverterFactory;
-import retrofit.Retrofit;
+import okhttp3.Cache;
+import okhttp3.HttpUrl;
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Dagger 2 retrofit module.
@@ -64,25 +64,26 @@ public class RetrofitModule {
     @Provides
     @Singleton
     public OkHttpClient provideOkHttpClient(Cache cache) {
-        OkHttpClient client = new OkHttpClient();
-        client.setCache(cache);
-        client.interceptors().add(new Interceptor() {
-            @Override
-            public Response intercept(Chain chain) throws IOException {
-                Request request = chain.request();
+        return new OkHttpClient.Builder()
+                .cache(cache)
+                .addInterceptor(new Interceptor() {
+                    @Override
+                    public Response intercept(Chain chain) throws IOException {
+                        Request originalRequest = chain.request();
+                        HttpUrl originalHttpUrl = originalRequest.url();
 
-                HttpUrl httpUrl = request.httpUrl().newBuilder()
-                        .addQueryParameter("client_id", "f7373613c193424ba4be7f85ec6e6b2c")
-                        .build();
+                        HttpUrl httpUrl = originalHttpUrl.newBuilder()
+                                .addQueryParameter("client_id", "f7373613c193424ba4be7f85ec6e6b2c")
+                                .build();
 
-                Request newRequest = request.newBuilder()
-                        .url(httpUrl)
-                        .build();
+                        Request request = originalRequest
+                                .newBuilder()
+                                .url(httpUrl)
+                                .build();
 
-                return chain.proceed(newRequest);
-            }
-        });
-        return client;
+                        return chain.proceed(request);
+                    }
+                }).build();
     }
 
     @Provides

@@ -8,7 +8,7 @@ import com.nearsoft.neargram.webservices.responses.InstagramSearchResponse;
 
 import java.io.IOException;
 
-import retrofit.Response;
+import retrofit2.Response;
 
 /**
  * <a href="http://d.android.com/tools/testing/testing_android.html">Testing Fundamentals</a>
@@ -32,7 +32,7 @@ public class ApplicationTest extends ApplicationTestCase<NeargramApplication> {
         InstagramService service = applicationComponent.provideInstagramService();
 
         Response<InstagramSearchResponse> response = service.getPopularPhotos(29.0974411, -111.0220760, 1000).execute();
-        assertTrue(response.isSuccess());
+        assertTrue(response.isSuccessful());
         InstagramSearchResponse instagramSearchResponse = response.body();
         assertNotNull(instagramSearchResponse);
     }
